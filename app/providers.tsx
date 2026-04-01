@@ -11,6 +11,7 @@ type ProvidersProps = {
   children: React.ReactNode;
 };
 
+// Composes global providers required by Chakra UI and i18n.
 export default function Providers({ children }: ProvidersProps) {
   return (
     <CacheProvider>

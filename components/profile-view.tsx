@@ -33,6 +33,7 @@ import {
   GithubUserNotFoundError
 } from "@/lib/api/github";
 import type { GithubRepo, GithubUser } from "@/lib/schemas/github";
+import { buildXProfileUrl, extractLinkedInUrl, normalizeTwitterHandle } from "@/lib/utils/profile";
 
 type ProfileViewProps = {
   username: string;
@@ -40,6 +41,7 @@ type ProfileViewProps = {
 
 type LoadState = "loading" | "loaded" | "not-found" | "error";
 
+// Renders the full profile page and coordinates search, profile data and repo list.
 export function ProfileView({ username }: ProfileViewProps) {
   const { t } = useTranslation("common");
   const router = useRouter();
@@ -49,6 +51,7 @@ export function ProfileView({ username }: ProfileViewProps) {
   const [repos, setRepos] = useState<GithubRepo[]>([]);
   const [repoReadmeSummaries, setRepoReadmeSummaries] = useState<Record<number, string>>({});
 
+  // Handles quick profile navigation from the header search field.
   const onSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmed = searchValue.trim();
@@ -60,6 +63,7 @@ export function ProfileView({ username }: ProfileViewProps) {
     router.push(`/profile/${encodeURIComponent(trimmed)}`);
   };
 
+  // Formats ISO date strings to pt-BR format used by the interface.
   const repoUpdatedLabel = (value: string) => {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
@@ -73,24 +77,26 @@ export function ProfileView({ username }: ProfileViewProps) {
     }).format(date);
   };
 
-  const extractLinkedInUrl = (blog?: string | null, bio?: string | null) => {
-    // Check blog field first
-    if (blog && blog.includes("linkedin.com")) {
-      return blog;
-    }
-    // Check bio for LinkedIn URL
-    if (bio) {
-      const linkedInMatch = bio.match(/(https?:\/\/(?:www\.)?linkedin\.com\/(?:in|company)\/[^\s]+)/i);
-      if (linkedInMatch) {
-        return linkedInMatch[0];
-      }
-    }
-    return null;
-  };
-
+  // Computes optional social links that can be rendered as external anchors.
   const getLinkedInUrl = useMemo(() => {
-    if (!user) return null;
+    if (!user) {
+      return null;
+    }
+
     return extractLinkedInUrl(user.blog, user.bio);
+  }, [user]);
+
+  const xProfileUrl = useMemo(() => {
+    if (!user) {
+      return null;
+    }
+
+    return buildXProfileUrl(user.twitter_username);
+  }, [user]);
+
+  const twitterLabel = useMemo(() => {
+    const handle = normalizeTwitterHandle(user?.twitter_username);
+    return handle ? `@${handle}` : null;
   }, [user]);
 
   const profileLinksWithData = useMemo(
@@ -136,15 +142,16 @@ export function ProfileView({ username }: ProfileViewProps) {
         });
       }
       
-      if (user?.twitter_username) {
-        items.push({ label: `@${user.twitter_username}`, icon: FiTwitter, value: "twitter" });
+      if (twitterLabel && xProfileUrl) {
+        items.push({ label: twitterLabel, icon: FiTwitter, value: "twitter", url: xProfileUrl });
       }
       
       return items;
     },
-    [user, getLinkedInUrl]
+    [user, getLinkedInUrl, twitterLabel, xProfileUrl]
   );
 
+  // Loads profile and repository list whenever the route username changes.
   useEffect(() => {
     let isMounted = true;
 
@@ -186,6 +193,7 @@ export function ProfileView({ username }: ProfileViewProps) {
     };
   }, [username]);
 
+  // Loads lightweight README summaries for each repo already returned by the API.
   useEffect(() => {
     let isMounted = true;
 
@@ -378,11 +386,11 @@ export function ProfileView({ username }: ProfileViewProps) {
                           </ChakraLink>
                         </HStack>
                       )}
-                      {user.twitter_username && (
+                      {twitterLabel && xProfileUrl && (
                         <HStack spacing={2}>
                           <Icon as={FiTwitter} boxSize={5} />
-                          <ChakraLink href={`https://twitter.com/${user.twitter_username}`} isExternal color="#0B69C7" _hover={{ textDecoration: "underline" }}>
-                            @{user.twitter_username}
+                          <ChakraLink href={xProfileUrl} isExternal color="#0B69C7" _hover={{ textDecoration: "underline" }}>
+                            {twitterLabel}
                           </ChakraLink>
                         </HStack>
                       )}

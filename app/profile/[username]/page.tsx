@@ -8,6 +8,7 @@ const ProfileView = dynamic(
   { ssr: false }
 );
 
+// Reads the dynamic route param and renders the profile client component.
 export default function ProfilePage() {
   const params = useParams<{ username: string }>();
   const username = typeof params?.username === "string" ? params.username : "";

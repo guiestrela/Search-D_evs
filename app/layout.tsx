@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   description: "GitHub profile search using Next.js, Chakra UI v2, i18next, and Zod",
 };
 
+// Defines global HTML structure, fonts and top-level providers for all routes.
 export default function RootLayout({
   children,
 }: Readonly<{

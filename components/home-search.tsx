@@ -19,11 +19,13 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+// Home search form that routes the user to a profile page by GitHub username.
 export function HomeSearch() {
   const router = useRouter();
   const { t } = useTranslation("common");
   const [username, setUsername] = useState("");
 
+  // Normalizes form input and updates route only when a valid username is provided.
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedUsername = username.trim();

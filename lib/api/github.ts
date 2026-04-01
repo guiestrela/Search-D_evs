@@ -2,6 +2,7 @@ import { githubReposSchema, githubUserSchema, type GithubRepo, type GithubUser }
 
 const INTERNAL_GITHUB_API_BASE = "/api/github/users";
 
+// Domain error used by UI to render a not-found state instead of generic failure.
 export class GithubUserNotFoundError extends Error {
   constructor() {
     super("Github user not found");
@@ -9,6 +10,7 @@ export class GithubUserNotFoundError extends Error {
   }
 }
 
+// Requests and validates one GitHub user through the app's internal API route.
 export async function fetchGithubUser(username: string): Promise<GithubUser> {
   const response = await fetch(`${INTERNAL_GITHUB_API_BASE}/${encodeURIComponent(username)}`, {
     cache: "no-store"
@@ -26,6 +28,7 @@ export async function fetchGithubUser(username: string): Promise<GithubUser> {
   return githubUserSchema.parse(json);
 }
 
+// Requests and validates the repository list for a given GitHub user.
 export async function fetchGithubRepos(username: string): Promise<GithubRepo[]> {
   const response = await fetch(`${INTERNAL_GITHUB_API_BASE}/${encodeURIComponent(username)}/repos`, {
     cache: "no-store"
@@ -39,6 +42,7 @@ export async function fetchGithubRepos(username: string): Promise<GithubRepo[]> 
   return githubReposSchema.parse(json);
 }
 
+// Retrieves one preprocessed README summary, returning empty text if unavailable.
 export async function fetchGithubRepoReadmeSummary(username: string, repo: string): Promise<string> {
   const response = await fetch(
     `${INTERNAL_GITHUB_API_BASE}/${encodeURIComponent(username)}/repos/${encodeURIComponent(repo)}/readme-summary`,

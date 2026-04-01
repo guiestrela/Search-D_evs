@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { summarizeReadme } from "@/lib/utils/readme";
 
 const GITHUB_API_BASE = "https://api.github.com";
 const GITHUB_API_VERSION = "2022-11-28";
 
+// Builds shared GitHub API headers and optionally injects authentication.
 function buildGithubHeaders(): HeadersInit {
   const token = process.env.GITHUB_TOKEN;
 
@@ -13,45 +15,7 @@ function buildGithubHeaders(): HeadersInit {
   };
 }
 
-function stripMarkdown(value: string): string {
-  return value
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1")
-    .replace(/[>*_#~-]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function summarizeReadme(markdown: string): string {
-  const normalized = markdown.replace(/\r\n/g, "\n").trim();
-  if (!normalized) {
-    return "";
-  }
-
-  const lines = normalized.split("\n");
-  const chunks: string[] = [];
-  let collecting = false;
-
-  for (const rawLine of lines) {
-    const line = rawLine.trim();
-    if (!line) {
-      if (collecting) {
-        break;
-      }
-      continue;
-    }
-
-    if (!collecting && line.startsWith("#")) {
-      continue;
-    }
-
-    collecting = true;
-    chunks.push(line);
-  }
-
-  return stripMarkdown(chunks.join(" ")).slice(0, 220);
-}
-
+// Reads a repository README, summarizes it and returns compact text for UI cards.
 export async function GET(
   _request: Request,
   context: { params: Promise<{ username: string; repo: string }> }
@@ -78,10 +42,6 @@ export async function GET(
   }
 
   if (!response.ok) {
-    // Fallback com dados de teste quando não há token (rate limit)
-    if (!process.env.GITHUB_TOKEN && response.status === 403) {
-      return NextResponse.json({ summary: "An amazing project showcasing modern development practices with clean code and comprehensive documentation." });
-    }
     return NextResponse.json({ error: "Failed to fetch readme" }, { status: response.status });
   }
 

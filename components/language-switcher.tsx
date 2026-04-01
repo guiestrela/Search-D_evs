@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 const STORAGE_KEY = "preferred-language";
+
+// Converts arbitrary language strings into one of the supported language codes.
 const normalizeLanguage = (value: string | null): "en" | "pt" | null => {
   if (!value) {
     return null;
@@ -20,6 +22,7 @@ const normalizeLanguage = (value: string | null): "en" | "pt" | null => {
   return null;
 };
 
+// Renders the language toggle and persists user preference in localStorage.
 export function LanguageSwitcher() {
   const { i18n } = useTranslation("common");
 
@@ -32,6 +35,7 @@ export function LanguageSwitcher() {
     document.documentElement.lang = selectedLanguage;
   }, [i18n]);
 
+  // Applies the selected language immediately and persists it for future sessions.
   const onChangeLanguage = (language: "pt" | "en") => {
     window.localStorage.setItem(STORAGE_KEY, language);
     void i18n.changeLanguage(language);
