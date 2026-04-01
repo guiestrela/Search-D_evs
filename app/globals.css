@@ -1,0 +1,138 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #f4f4f6;
+}
+
+@media (min-width: 769px) {
+  body {
+    font-family: var(--font-inter), sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: 0;
+  }
+}
+
+.language-switcher-floating {
+  position: fixed !important;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  right: calc(env(safe-area-inset-right, 0px) + 12px);
+  z-index: 2000;
+  transform: translateZ(0);
+}
+
+.language-switcher {
+  display: inline-flex;
+  border: 1px solid #d8d8df;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.language-switcher-btn {
+  border: 0;
+  margin: 0;
+  padding: 7px 12px;
+  background: transparent;
+  color: #33343f;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.language-switcher-btn + .language-switcher-btn {
+  border-left: 1px solid #e5e7ef;
+}
+
+.language-switcher-btn.active {
+  background: #222430;
+  color: #ffffff;
+}
+
+.language-switcher-btn:focus-visible {
+  outline: 2px solid #5060ff;
+  outline-offset: -2px;
+}
+
+@media (max-width: 768px) {
+  .language-switcher-floating {
+    top: calc(env(safe-area-inset-top, 0px) + 18px);
+    right: calc(env(safe-area-inset-right, 0px) + 10px);
+  }
+
+  .home-mobile-search-layout {
+    width: 305px;
+    height: 68px;
+    position: relative;
+    top: 225px;
+    left: 54px;
+    opacity: 1;
+  }
+}
+
+@media (min-width: 769px) {
+  .home-search-layout {
+    width: 592px;
+    height: 48px;
+    position: relative;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+
+  .home-search-button {
+    width: 176px;
+    height: 48px;
+    position: static;
+    opacity: 1;
+    border-radius: 6px;
+    gap: 8px;
+    padding-top: 10px;
+    padding-right: 24px;
+    padding-bottom: 10px;
+    padding-left: 24px;
+    font-family: var(--font-inter), sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: 0;
+    transform: rotate(0deg);
+  }
+
+  .profile-title-photo-block {
+    width: 248px;
+    height: 49px;
+    position: relative;
+    top: 192px;
+    left: 128px;
+    opacity: 1;
+    gap: 16px;
+    transform: rotate(0deg);
+  }
+
+  .profile-search-layout {
+    width: 590px;
+    height: 48px;
+    position: relative;
+    top: 0;
+    left: 119px;
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+
+  .profile-search-input {
+    height: 48px !important;
+    border-width: 2px !important;
+    border-radius: 6px !important;
+  }
+}
